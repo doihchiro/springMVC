@@ -24,6 +24,11 @@
                     regForm.submit();
                 } else if (oper === 'reset') {
                     regForm[0].reset();
+                } else if (oper === 'list') {
+                    location.href = "${cpath}/list";
+                } else if (oper === 'remove') {
+                    var idx = regForm.find("#idx").val();
+                    location.href = "${cpath}/remove?idx=" + idx;
                 }
             });
 
@@ -44,6 +49,7 @@
 
         function printBoard(vo) {
             var regForm = $("#regForm");
+            regForm.find("#idx").val(vo.idx);
             regForm.find("#title").val(vo.title);
             regForm.find("#content").val(vo.content);
             regForm.find("#writer").val(vo.writer);

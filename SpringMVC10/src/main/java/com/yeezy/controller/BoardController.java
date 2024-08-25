@@ -41,4 +41,10 @@ public class BoardController {
         Board board = boardService.get(idx);
         return board;
     }
+
+    @GetMapping("/remove")
+    public String remove(Long idx) {
+        boardService.delete(idx);
+        return "redirect:/list";
+    }
 }

@@ -9,4 +9,5 @@ public interface BoardService {
     List<Board> getList();
     void register(Board board);
     Board get(Long idx);
+    void delete(Long idx);
 }
