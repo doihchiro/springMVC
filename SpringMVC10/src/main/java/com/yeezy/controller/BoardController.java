@@ -8,6 +8,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.List;
 
@@ -33,5 +34,11 @@ public class BoardController {
     public String register(Board board) {
         boardService.register(board);
         return "redirect:/list";
+    }
+
+    @GetMapping("/get")
+    public @ResponseBody Board get(Long idx) {
+        Board board = boardService.get(idx);
+        return board;
     }
 }

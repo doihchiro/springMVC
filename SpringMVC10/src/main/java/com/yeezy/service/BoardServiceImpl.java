@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -21,5 +22,11 @@ public class BoardServiceImpl implements BoardService {
     @Override
     public void register(Board board) {
         boardRepository.save(board);
+    }
+
+    @Override
+    public Board get(Long idx) {
+        Optional<Board> board = boardRepository.findById(idx);
+        return board.get();
     }
 }

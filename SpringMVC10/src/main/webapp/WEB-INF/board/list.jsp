@@ -10,10 +10,11 @@
     <title>Bootstrap Example</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.slim.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.slim.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         $(document).ready(function (){
             var regForm = $("#regForm");
@@ -25,7 +26,33 @@
                     regForm[0].reset();
                 }
             });
+
+            // a tag 클릭시 상세보기
+            $("a").on("click", function (e) {
+                e.preventDefault();
+                var idx = $(this).attr('href');
+                $.ajax({
+                    url : "${cpath}/get",
+                    type : "get",
+                    data : {"idx":idx},
+                    dataType : "json",
+                    success : printBoard,
+                    error : function(){ alert("error"); }
+                });
+            });
         });
+
+        function printBoard(vo) {
+            var regForm = $("#regForm");
+            regForm.find("#title").val(vo.title);
+            regForm.find("#content").val(vo.content);
+            regForm.find("#writer").val(vo.writer);
+            regForm.find("input").attr("readonly", true);
+            regForm.find("textarea").attr("readonly", true);
+            $("#regDiv").css("display", "none");
+            $("#updateDiv").css("display", "block");
+        }
+
     </script>
 </head>
 <body>
