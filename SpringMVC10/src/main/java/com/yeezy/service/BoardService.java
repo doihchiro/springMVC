@@ -10,4 +10,5 @@ public interface BoardService {
     void register(Board board);
     Board get(Long idx);
     void delete(Long idx);
+    void update(Board board);
 }

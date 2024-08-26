@@ -11,8 +11,8 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.slim.min.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.bundle.min.js"></script>
     <script>
@@ -29,6 +29,11 @@
                 } else if (oper === 'remove') {
                     var idx = regForm.find("#idx").val();
                     location.href = "${cpath}/remove?idx=" + idx;
+                } else if (oper === 'updateForm') {
+                    regForm.find("#title").attr("readonly", false);
+                    regForm.find("#content").attr("readonly", false);
+                    var upBtn="<button type='button' onclick='goUpdate()' class='btn btn-sm btn-info'>수정완료</button>";
+                    $("#update").html(upBtn);
                 }
             });
 
@@ -57,6 +62,12 @@
             regForm.find("textarea").attr("readonly", true);
             $("#regDiv").css("display", "none");
             $("#updateDiv").css("display", "block");
+        }
+
+        function goUpdate() {
+            var regForm = $("#regForm");
+            regForm.attr("action", "${cpath}/modify");
+            regForm.submit();
         }
 
     </script>
