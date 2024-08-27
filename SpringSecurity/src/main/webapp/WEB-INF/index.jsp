@@ -20,7 +20,7 @@
     <div class="card" style="width: 600px;text-align: center;">
         <div class="jumbotron jumbotron-fluid">
             <div class="container">
-                <h1>Spring BOOT</h1>
+                <h1>OASIS</h1>
                 <p>Main Page</p>
             </div>
         </div>
@@ -34,7 +34,7 @@
                 </div>
                 <div class="card bg-danger">
                     <div class="card-body text-center">
-                        <p class="card-text"><a href="${cpath}/member/login">로그인(GET)</a></p>
+                        <p class="card-text"><a href="${cpath}/member/login">로그인</a></p>
                     </div>
                 </div>
             </div>

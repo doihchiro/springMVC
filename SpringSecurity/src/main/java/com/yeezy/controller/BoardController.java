@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import java.util.List;
 
 @Controller
+@RequestMapping("/board")
 @RequiredArgsConstructor
 public class BoardController {
 
@@ -22,7 +23,7 @@ public class BoardController {
     public String list(Model model) {
         List<Board> list = boardService.getList();
         model.addAttribute("list", list);
-        return "list";
+        return "board/list";
     }
 
     @GetMapping("/register")
@@ -33,7 +34,7 @@ public class BoardController {
     @PostMapping("/register")
     public String register(Board board) {
         boardService.register(board);
-        return "redirect:/list";
+        return "redirect:/board/list";
     }
 
     @GetMapping("/get")
@@ -45,12 +46,12 @@ public class BoardController {
     @GetMapping("/remove")
     public String remove(Long idx) {
         boardService.delete(idx);
-        return "redirect:/list";
+        return "redirect:/board/list";
     }
 
     @PostMapping("/modify")
     public String modify(Board board) {
         boardService.update(board);
-        return "redirect:/list";
+        return "redirect:/board/list";
     }
 }
