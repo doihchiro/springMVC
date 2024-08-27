@@ -3,6 +3,9 @@
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@taglib prefix="fn"  uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
+<c:set var="user" value="${SPRING_SECURITY_CONTEXT.authentication.principal}"/>
+<c:set var="auth" value="${SPRING_SECURITY_CONTEXT.authentication.authorities}"/>
 <c:set var="cpath" value="${pageContext.request.contextPath}"/>
 <!DOCTYPE html>
 <html lang="en">
@@ -17,6 +20,11 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         $(document).ready(function (){
+            console.log('${user}');
+            console.log('${user.member}');
+            console.log('${user.username}');
+            console.log('${user.member.username}');
+            console.log('${auth[0]}');
             var regForm = $("#regForm");
             $("button").on("click", function (e) {
                 var oper = $(this).data("oper");
@@ -25,10 +33,10 @@
                 } else if (oper === 'reset') {
                     regForm[0].reset();
                 } else if (oper === 'list') {
-                    location.href = "${cpath}/list";
+                    location.href = "${cpath}/board/list";
                 } else if (oper === 'remove') {
                     var idx = regForm.find("#idx").val();
-                    location.href = "${cpath}/remove?idx=" + idx;
+                    location.href = "${cpath}/board/remove?idx=" + idx;
                 } else if (oper === 'updateForm') {
                     regForm.find("#title").attr("readonly", false);
                     regForm.find("#content").attr("readonly", false);
@@ -42,7 +50,7 @@
                 e.preventDefault();
                 var idx = $(this).attr('href');
                 $.ajax({
-                    url : "${cpath}/get",
+                    url : "${cpath}/board/get",
                     type : "get",
                     data : {"idx":idx},
                     dataType : "json",
@@ -61,12 +69,23 @@
             regForm.find("input").attr("readonly", true);
             regForm.find("textarea").attr("readonly", true);
             $("#regDiv").css("display", "none");
+
+            if ('${user.member.name}' !== vo.writer) {
+                $("button[data-oper='updateForm']").attr("disabled", true)
+                $("button[data-oper='remove']").attr("disabled", true)
+            }
+
+            if ('${user.member.name}' === vo.writer) {
+                $("button[data-oper='updateForm']").attr("disabled", false)
+                $("button[data-oper='remove']").attr("disabled", false)
+            }
+
             $("#updateDiv").css("display", "block");
         }
 
         function goUpdate() {
             var regForm = $("#regForm");
-            regForm.attr("action", "${cpath}/modify");
+            regForm.attr("action", "${cpath}/board/modify");
             regForm.submit();
         }
 
@@ -90,19 +109,24 @@
                 <div class="col-lg-2">
                     <div class="card" style="min-height:500px; max-height: 1000px">
                         <div class="card-body">
-                            <h4 class="card-title">GUEST</h4>
+                            <h4 class="card-title"><sec:authentication property="principal.member.name"/></h4>
                             <p class="card-text">회원님 Welcome!</p>
-                            <form action="">
-                                <div class="form-group">
-                                    <label for="memId">아이디</label>
-                                    <input type="text" class="form-control" id="memId" name="memId"/>
-                                </div>
-                                <div class="form-group">
-                                    <label for="memPwd">비밀번호</label>
-                                    <input type="password" class="form-control" id="memPwd" name="memPwd"/>
-                                </div>
-                                <button type="button" class="btn btn-sm btn-primary form-control">로그인</button>
+                            <form action="${cpath}/member/logout">
+                                <button type="submit" class="btn btn-sm btn-primary form-control">로그아웃</button>
                             </form>
+                            <br/>
+                            <sec:authorize access="hasRole('ROLE_ADMIN')">
+                                <div><sec:authentication property="principal.member.role"/> MENU</div>
+                                - 메뉴리스트 -
+                            </sec:authorize>
+                            <sec:authorize access="hasRole('ROLE_MANAGER')">
+                                <div><sec:authentication property="principal.member.role"/> MENU</div>
+                                - 메뉴리스트 -
+                            </sec:authorize>
+                            <sec:authorize access="hasRole('ROLE_MEMBER')">
+                                <div><sec:authentication property="principal.member.role"/> MENU</div>
+                                - 메뉴리스트 -
+                            </sec:authorize>
                         </div>
                     </div>
                 </div>
@@ -131,10 +155,10 @@
                 <div class="col-lg-5">
                     <div class="card" style="min-height:500px; max-height: 1000px">
                         <div class="card-body">
-                            <form id="regForm" action="${cpath}/register" method="post">
+                            <form id="regForm" action="${cpath}/board/register" method="post">
                                 <input type="hidden" id="idx" name="idx" value="${vo.idx}"/>
                                 <div class="form-group">
-                                    <label for="memId">제목:</label>
+                                    <label for="title">제목:</label>
                                     <input type="text" class="form-control" id="title" name="title" placeholder="Enter title"/>
                                 </div>
                                 <div class="form-group">
@@ -143,7 +167,8 @@
                                 </div>
                                 <div class="form-group">
                                     <label for="writer">작성자:</label>
-                                    <input type="text" class="form-control" id="writer" name="writer" placeholder="Enter writer"/>
+                                    <input type="text" class="form-control" id="writer" name="writer" readonly="readonly"
+                                           value='<sec:authentication property="principal.member.name"/>'/>
                                 </div>
                                 <div id="regDiv">
                                     <button type="button" data-oper="register" class="btn btn-sm btn-primary">등록</button>
@@ -151,8 +176,15 @@
                                 </div>
                                 <div id="updateDiv" style="display: none">
                                     <button type="button" data-oper="list" class="btn btn-sm btn-primary">목록</button>
-                                    <span id="update"><button type="button" data-oper="updateForm" class="btn btn-sm btn-warning">수정</button></span>
-                                    <button type="button" data-oper="remove" class="btn btn-sm btn-success">삭제</button>
+
+                                    <c:if test="${user.member.name eq vo.writer}">
+                                        <span id="update"><button type="button" data-oper="updateForm" class="btn btn-sm btn-warning">수정</button></span>
+                                        <button type="button" data-oper="remove" class="btn btn-sm btn-success">삭제</button>
+                                    </c:if>
+                                    <c:if test="${user.member.name ne vo.writer}">
+                                        <span id="update"><button type="button" data-oper="updateForm" disabled class="btn btn-sm btn-warning">수정</button></span>
+                                        <button type="button" data-oper="remove" disabled class="btn btn-sm btn-success">삭제</button>
+                                    </c:if>
                                 </div>
                             </form>
                         </div>
