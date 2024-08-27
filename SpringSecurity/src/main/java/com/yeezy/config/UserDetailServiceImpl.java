@@ -1,6 +1,6 @@
 package com.yeezy.config;
 
-import com.yeezy.entity.CustomUSer;
+import com.yeezy.entity.CustomUser;
 import com.yeezy.entity.Member;
 import com.yeezy.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +26,6 @@ public class UserDetailServiceImpl implements UserDetailsService {
             throw new UsernameNotFoundException("User not found with username: " + username);
         }
 
-        return new CustomUSer(member.get());
+        return new CustomUser(member.get());
     }
 }
